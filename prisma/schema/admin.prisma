@@ -1,0 +1,43 @@
+enum Role {
+  super_admin // the developer: everything + the users page
+  owner // the business owner: every business screen
+}
+
+// Everyone who can log in. The first super admin comes from ADMIN_EMAIL /
+// ADMIN_PASSWORD; the super admin creates every other account from the site.
+model Admin {
+  id            String    @id @default(uuid())
+  name          String    @default("")
+  email         String    @unique
+  password_hash String
+  role          Role      @default(owner)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  sessions      Session[]
+
+  @@map("admins")
+}
+
+// One row per signed-in device. Only the SHA-256 of the token is stored, so a
+// leaked database row cannot be used to sign in.
+model Session {
+  id         String   @id @default(uuid())
+  admin_id   String
+  token_hash String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+  admin      Admin    @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@index([admin_id])
+  @@map("sessions")
+}
+
+// Business-wide settings, one row (id = 1), shared by every login.
+model Setting {
+  id            Int      @id @default(1)
+  business_name String   @default("রেন্ট এ কার")
+  updated_at    DateTime @updatedAt
+
+  @@map("settings")
+}

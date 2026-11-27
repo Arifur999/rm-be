@@ -1,0 +1,26 @@
+enum DriverStatus {
+  active
+  inactive
+}
+
+model Driver {
+  id             String       @id @default(uuid())
+  name           String
+  phone          String
+  license_number String?
+  address        String?
+  joined_at      DateTime?    @db.Date
+  default_car_id String?
+  status         DriverStatus @default(active)
+  note           String?
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  deleted_at     DateTime?
+
+  default_car Car?      @relation(fields: [default_car_id], references: [id], onDelete: SetNull)
+  trips       Trip[]
+  expenses    Expense[]
+
+  @@index([deleted_at])
+  @@map("drivers")
+}

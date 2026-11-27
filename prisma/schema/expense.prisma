@@ -1,0 +1,33 @@
+enum ExpenseCategory {
+  fuel
+  toll
+  parking
+  repair
+  driver_payment
+  food
+  other
+}
+
+model Expense {
+  id           String          @id @default(uuid())
+  expense_date DateTime        @db.Date
+  category     ExpenseCategory
+  amount       Decimal         @db.Decimal(12, 2)
+  car_id       String?
+  driver_id    String?
+  trip_id      String?
+  note         String?
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @updatedAt
+  deleted_at   DateTime?
+
+  car    Car?    @relation(fields: [car_id], references: [id], onDelete: SetNull)
+  driver Driver? @relation(fields: [driver_id], references: [id], onDelete: SetNull)
+  trip   Trip?   @relation(fields: [trip_id], references: [id], onDelete: SetNull)
+
+  @@index([expense_date])
+  @@index([car_id, expense_date])
+  @@index([driver_id, expense_date])
+  @@index([trip_id])
+  @@map("expenses")
+}

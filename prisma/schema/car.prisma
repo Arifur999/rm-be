@@ -1,0 +1,39 @@
+enum CarType {
+  car
+  micro
+  hiace
+  bus
+  other
+}
+
+enum CarStatus {
+  active
+  maintenance
+  inactive
+}
+
+model Car {
+  id                  String    @id @default(uuid())
+  name                String
+  // Registration number. Unique among cars that are not deleted (checked in
+  // the service, so a deleted car's number can be added again).
+  number              String
+  type                CarType   @default(car)
+  status              CarStatus @default(active)
+  fitness_expiry      DateTime? @db.Date
+  tax_token_expiry    DateTime? @db.Date
+  insurance_expiry    DateTime? @db.Date
+  route_permit_expiry DateTime? @db.Date
+  note                String?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  deleted_at          DateTime?
+
+  trips    Trip[]
+  expenses Expense[]
+  drivers  Driver[]
+
+  @@index([deleted_at])
+  @@index([number])
+  @@map("cars")
+}

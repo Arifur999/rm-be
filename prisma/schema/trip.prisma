@@ -1,0 +1,35 @@
+enum TripStatus {
+  running
+  completed
+  cancelled
+}
+
+// One trip = the car left the garage once. Due is fare - paid (computed).
+model Trip {
+  id             String     @id @default(uuid())
+  trip_date      DateTime   @db.Date
+  car_id         String
+  driver_id      String
+  from_place     String
+  to_place       String
+  customer_name  String?
+  customer_phone String?
+  out_time       String? // "HH:mm"
+  return_time    String? // "HH:mm"
+  fare           Decimal    @db.Decimal(12, 2)
+  paid           Decimal    @default(0) @db.Decimal(12, 2)
+  status         TripStatus @default(completed)
+  note           String?
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  deleted_at     DateTime?
+
+  car      Car       @relation(fields: [car_id], references: [id], onDelete: Restrict)
+  driver   Driver    @relation(fields: [driver_id], references: [id], onDelete: Restrict)
+  expenses Expense[]
+
+  @@index([trip_date])
+  @@index([car_id, trip_date])
+  @@index([driver_id, trip_date])
+  @@map("trips")
+}
