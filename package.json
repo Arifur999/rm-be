@@ -20,6 +20,8 @@
     "vercel-build": "prisma generate && esbuild api/_handler.ts --bundle --packages=external --platform=node --target=node22 --format=esm --outfile=api/index.js"
   },
   "dependencies": {
+    "@neon/config": "^1.14.8",
+    "@neon/env": "^2.1.11",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "bcryptjs": "^3.0.3",
